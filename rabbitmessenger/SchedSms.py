@@ -26,7 +26,7 @@ class SchedSms:
 			durable=True
 			)
 
-		self.StartSms()
+		self.Schedule()
 
 	def SendSMS(self,ch,method,properties,body):
 		'''
@@ -88,6 +88,7 @@ class SchedSms:
 			print "SMS will pause at " , start_time
 			self.__timerThread = threading.Timer(delay,self.PauseSms)
 			self.__timerThread.start()
+			self.StartSms()
 
 
 	def Stop(self):

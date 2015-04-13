@@ -8,4 +8,4 @@ config["SMTPUserName"] = "3321856fe60860009"
 config["SMTPPassword"] = "1d21e5c26c2256"
 
 # Settings for our scheduler
-config["PauseSMS"] = ("21:48",1) # time in HH:MM (24h) format, Minutes to puase for. 
+config["PauseSMS"] = ("20:15",60) # time in HH:MM (24h) format, Minutes to puase for. 
