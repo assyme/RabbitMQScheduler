@@ -1,4 +1,4 @@
-#!usr/local/bin
+#!usr/local/bin python
 import sched, time
 from datetime import datetime, timedelta
 import threading
