@@ -41,7 +41,7 @@ class EmailSender():
 
 		#send the message
 		try:
-			response = server.sendmail(fromAddress,toAddress,msg.as_string())
+			response = server.sendmail(fromAddress,message["recipients"],msg.as_string())
 			print "[Info] : Email was sent successfully"
 			return True
 		except SMTPException:
@@ -49,7 +49,7 @@ class EmailSender():
 			return False
 
 		if (self._keep_alive != True):
-			self.Stop()
+			server.quit()
 
 
 	def __establish_connection(self):

@@ -4,7 +4,7 @@ import threading
 
 class RabbitThreadedConsumer(threading.Thread):
 
-	def __init__(self,queue_name,callback):
+	def __init__(self,host,queue_name,callback):
 		'''
 		RabbitMQ consumer that listens to a particular queue in a separate thread.
 		@input: 
@@ -16,10 +16,11 @@ class RabbitThreadedConsumer(threading.Thread):
 		self.__connection = None
 		self.__channel = None
 		self.__queue_name = queue_name
+		self.__host = host
 
 	def run(self):
 		self.__stop = False;
-		connection = pika.BlockingConnection(pika.ConnectionParameters(host="localhost"))
+		connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.__host))
 		
 		channel = connection.channel()
 		
@@ -38,10 +39,10 @@ class RabbitThreadedConsumer(threading.Thread):
 
 		if (self.__stop == False):
 			try:
-				print "[Info] : SMS listener started."
+				print "[Info] : %s listener started." % (self.__queue_name,)
 				channel.start_consuming()
 			except:
-				print "[Info] : SMS listener stopped."
+				print "[Info] : %s listener stopped." % (self.__queue_name,)
 				channel.stop_consuming()
 				connection.close()
 
@@ -50,7 +51,7 @@ class RabbitThreadedConsumer(threading.Thread):
 		'''
 		Stops listening to the RabbitMQ queue and closes the connection.  
 		'''
-		print "[Info] : SMS listerner stopped by parent thread"
+		print "[Info] : %s listerner stopped by parent thread" % (self.__queue_name,)
 		self.__stop = True
 		if (self.__channel != None):
 			self.__channel.stop_consuming()

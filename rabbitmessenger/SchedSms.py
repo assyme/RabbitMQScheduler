@@ -53,10 +53,12 @@ class SchedSms:
 			return False
 
 
-	def StartSms(self):
-		self.__currentListener = RabbitThreadedConsumer("sms_queue",self.SendSMS)
+	def StartSms(self,schedule_again):
+		self.__currentListener = RabbitThreadedConsumer("localhost","sms_queue",self.SendSMS)
+		self.__currentListener.setDaemon(True)
 		self.__currentListener.start()
-		self.Schedule()
+		if schedule_again:
+			self.Schedule()
 
 	def PauseSms(self):
 		if (self.__currentListener != None):
@@ -76,7 +78,7 @@ class SchedSms:
 		if start_time < now < end_time:
 			print "SMS paused until: ", end_time
 			delay = (end_time - now).total_seconds()
-			self.__timerThread = threading.Timer(delay,self.StartSms)
+			self.__timerThread = threading.Timer(delay,self.StartSms,[True])
 			self.__timerThread.start()
 			
 		else:
@@ -88,13 +90,14 @@ class SchedSms:
 			print "SMS will pause at " , start_time
 			self.__timerThread = threading.Timer(delay,self.PauseSms)
 			self.__timerThread.start()
-			self.StartSms()
+			self.StartSms(False)
 
 
 	def Stop(self):
 		print "Stopping SMS messenger"
 		self.__timerThread.cancel()
-		self.__currentListener.stop_consuming()
+		if self.__currentListener != None:
+			self.__currentListener.stop_consuming()
 		self.__connection.close()
 		
 
